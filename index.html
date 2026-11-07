@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fff7ec">
+<title>DOGTI 狗格测试｜测测你是哪种性格的小狗</title>
+<meta name="description" content="24 道题，测出藏在你身体里的那只小狗。16 种原创小狗，基于人和狗共有的 4 个性格维度。免费、无需登录、不收集答案。">
+<meta property="og:title" content="DOGTI 狗格测试｜测测你是哪种性格的小狗">
+<meta property="og:description" content="24 道题 · 16 种小狗 · 有隐藏款。测完邀请朋友，看看你们是什么组合！">
+<meta property="og:image" content="https://zhouzhouwen.github.io/dogti/assets/img/cover.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/dogti-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/dogti-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<!-- 微信分享缩略图（老版微信会抓取页面里第一张大图） -->
+<img class="wx-thumb" src="assets/img/share-thumb.png" alt="">
+
+<div class="app" id="app">
+
+  <!-- ============ 首页 ============ -->
+  <section class="screen" id="s-home" aria-label="首页">
+    <nav class="topbar">
+      <span class="mini-logo">DOGTI</span>
+      <span class="topbar-links"><a href="#gallery">图鉴</a><a href="#about">科学依据</a></span>
+    </nav>
+
+    <div class="invite-banner" id="inviteBanner" hidden></div>
+
+    <div class="hero card">
+      <span class="hero-badge">原创 · 狗格测试</span>
+      <h1 class="logo" aria-label="DOGTI"><span>D</span><span>O</span><span>G</span><span>T</span><span>I</span></h1>
+      <p class="hero-sub">测测你是哪种性格的小狗</p>
+      <div class="hero-dogs" id="heroDogs"></div>
+      <div class="pet-bubble" id="petBubble" hidden></div>
+    </div>
+
+    <p class="sell">人和狗共享 <b>4</b> 个性格维度<br>24 道题，找出藏在你身体里的那只小狗</p>
+    <div class="chips">
+      <span class="chip">24 题</span><span class="chip">约 3 分钟</span><span class="chip">16 种小狗</span><span class="chip chip-hot">有隐藏款</span>
+    </div>
+
+    <button class="btn btn-big" id="startBtn">开始测试 <span class="arrow">→</span></button>
+    <p class="social-proof" id="socialProof">原创 · 免费 · 不用登录 · 不收集你的答案</p>
+    <div class="last-result" id="lastResult" hidden></div>
+
+    <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+    <div class="card home-info">
+      <div class="author-line" id="authorLine" hidden></div>
+      <p>测完欢迎来评论区报出你的狗种，看看谁和你是同款！</p>
+      <p class="muted">原创测试，转载请注明出处，搬运必究。</p>
+      <p class="muted">适用于所有两脚兽。仅供娱乐，不是心理诊断；犬种只是比喻。</p>
+    </div>
+
+    <footer class="foot"><a href="#about">科学依据与参考文献</a> · <a href="#about" data-goto="privacy">隐私说明</a></footer>
+  </section>
+
+  <!-- ============ 答题 ============ -->
+  <section class="screen" id="s-quiz" aria-label="答题">
+    <div class="qhead">
+      <button class="iconbtn" id="qBack" aria-label="上一题">‹</button>
+      <div class="qcount"><b id="qNum">1</b><span>/ 24</span></div>
+      <span class="iconbtn ghost"></span>
+    </div>
+    <div class="progress">
+      <div class="ptrack"><div class="pfill" id="pFill"></div></div>
+      <div class="prunner" id="pRunner"></div>
+      <div class="pgoal" id="pGoal"></div>
+    </div>
+    <div class="qcard card" id="qCard">
+      <span class="chip qtag" id="qTag"></span>
+      <p class="qtext" id="qText"></p>
+    </div>
+    <div class="opts" id="opts"></div>
+    <p class="qhint">凭第一直觉选，别想太久～</p>
+  </section>
+
+  <!-- ============ 鉴定中 ============ -->
+  <section class="screen" id="s-loading" aria-label="鉴定中">
+    <div class="loading">
+      <div class="ld-dog" id="ldDog"></div>
+      <p class="ld-text" id="ldText">正在嗅嗅你的答案…</p>
+      <div class="ld-bar"><i></i></div>
+    </div>
+  </section>
+
+  <!-- ============ 结果 ============ -->
+  <section class="screen" id="s-result" aria-label="测试结果"></section>
+
+  <!-- ============ 图鉴 ============ -->
+  <section class="screen" id="s-gallery" aria-label="小狗图鉴">
+    <nav class="topbar"><a href="#home" class="back-link">‹ 返回</a><span class="mini-logo">图鉴</span><span class="topbar-links"></span></nav>
+    <h2 class="page-title">16 种小狗图鉴</h2>
+    <p class="page-sub">4 个维度 × 高低两极 = 16 种。点开看看你的朋友是哪只？</p>
+    <div class="legend" id="legend"></div>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <!-- ============ 关于 / 参考文献 ============ -->
+  <section class="screen" id="s-about" aria-label="科学依据"></section>
+
+</div>
+
+<!-- 底部弹层 -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true">
+    <button class="sheet-x" data-close aria-label="关闭">×</button>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="fx" id="fx" aria-hidden="true"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/dogs.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
