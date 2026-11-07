@@ -322,6 +322,7 @@
     else if (parts[0] === 'about') { renderAbout(); show('about'); }
     else if (parts[0] === 'pair') { renderPair(parts[1] || ''); show('pair'); }
     else { renderHome(); show('home'); }
+    checkMore();
   }
   function go(name, replace) {
     var url = location.pathname + location.search + (name === 'home' ? '' : '#' + name);
@@ -425,10 +426,28 @@
     if (!list.length) return '';
     return '<div class="card more"><h3 class="sec-title">' + t('moreTitle') + '</h3><p class="muted small" style="margin:-6px 0 10px">' + t('moreSub') + '</p><div class="more-list">' +
       list.map(function (m) {
-        return '<a class="more-item" href="' + esc(m.url + '?l=' + LANG) + '" style="--tbg:' + m.bg + '">' + (m.icon ? '<img class="more-icon" src="' + esc(m.icon) + '" alt="">' : '') +
+        return '<a class="more-item" data-mu="' + esc(m.url) + '" href="' + esc(m.url + '?l=' + LANG) + '" style="--tbg:' + m.bg + '">' + (m.icon ? '<img class="more-icon" src="' + esc(m.icon) + '" alt="">' : '') +
           '<span class="more-text"><b>' + esc(m.name[LANG] || m.name.zh) + '</b><em>' + esc(m.desc[LANG] || m.desc.zh) + '</em></span>' +
           (m.qr ? '<img class="more-qr" src="' + esc(m.qr) + '" alt="QR">' : '') + '</a>';
       }).join('') + '</div><p class="muted small center">' + t('moreQrHint') + '</p></div>';
+  }
+
+  // 推荐的其他测试还没上线（同域 404）就先藏起来，上线后自动出现
+  var moreAlive = store.sget('moreAlive', {});
+  function hideMore(a) { var box = a.closest('.more'); a.parentNode.removeChild(a); if (box && !box.querySelector('.more-item')) box.parentNode.removeChild(box); }
+  function checkMore() {
+    $$('.more-item[data-mu]').forEach(function (a) {
+      var u = a.getAttribute('data-mu'), same = false;
+      if (moreAlive[u] === false) { hideMore(a); return; }
+      if (moreAlive[u] === true || a._chk) return;
+      a._chk = 1;
+      try { same = new URL(u, location.href).origin === location.origin; } catch (e) { }
+      if (!same || !window.fetch) return;
+      fetch(u, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+        moreAlive[u] = r.ok; store.sset('moreAlive', moreAlive);
+        if (!r.ok) $$('.more-item[data-mu="' + u + '"]').forEach(hideMore);
+      }).catch(function () { });
+    });
   }
 
   /* ================= 答题 ================= */
