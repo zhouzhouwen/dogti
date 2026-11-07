@@ -203,10 +203,10 @@
         E(158, 142, 15, 15, 'rgba(190,230,255,.6)', ol(4.5)) + P('M150 136 Q153 131 159 131', 'none', { stroke: '#fff', 'stroke-width': 3, 'stroke-linecap': 'round' }) + '</g>';
     },
     bone: function () {
-      return '<g class="d-acc" transform="rotate(-18 168 176)">' + P('M152 172 a6 6 0 1 1 6 -6 h20 a6 6 0 1 1 6 6 a6 6 0 1 1 -6 6 h-20 a6 6 0 1 1 -6 -6z', '#fff7e8', ol(3.5)) + '</g>';
+      return '<g class="d-acc"><g transform="rotate(-18 168 176)">' + P('M152 172 a6 6 0 1 1 6 -6 h20 a6 6 0 1 1 6 6 a6 6 0 1 1 -6 6 h-20 a6 6 0 1 1 -6 -6z', '#fff7e8', ol(3.5)) + '</g></g>';
     },
     feather: function () {
-      return '<g class="d-acc" transform="rotate(28 160 40)">' + P('M160 18 Q176 34 162 64 Q148 36 160 18Z', '#fff', ol(3.2)) + P('M160 26 L161 62', 'none', ol(2.4)) + '</g>';
+      return '<g class="d-acc"><g transform="rotate(28 160 40)">' + P('M160 18 Q176 34 162 64 Q148 36 160 18Z', '#fff', ol(3.2)) + P('M160 26 L161 62', 'none', ol(2.4)) + '</g></g>';
     },
     beret: function () {
       return '<g class="d-acc">' + P('M80 34 Q104 10 136 24 Q146 30 140 38 Q116 46 84 42 Q74 40 80 34Z', '#d6455d', ol(4)) + P('M110 18 L112 10', 'none', ol(4)) + '</g>';
@@ -340,6 +340,107 @@
           E(76, 92, 7.5, 4.5, '#fff3e3') + E(124, 92, 7.5, 4.5, '#fff3e3')) +
         eyes('small', { y: 108, xl: 74 }) + nose(100, 121) + mouth('small', 100, 122) + blush({ op: 0.55 }) + ACC.scarf() + paws('#fff3e3');
     },
+    /* ---------- 隐藏款 ---------- */
+    diode: function (id) { // 二极管：一半黑一半白
+      var dark = '#3a3b45', light = '#fffdf8';
+      var head = 'M34 106 Q34 52 100 50 Q166 52 166 106 Q166 160 100 162 Q34 160 34 106Z';
+      return earPointy(dark, '#6a6c7c') + mirror(earPointy(light, '#ffd3dc')) +
+        '<defs><clipPath id="dl' + id + '"><rect x="0" y="0" width="100" height="200"/></clipPath></defs>' +
+        P(head, light) + '<g clip-path="url(#dl' + id + ')">' + P(head, dark) + '</g>' + P(head, 'none', OL) +
+        E(100, 132, 28, 20, '#ececf2') +
+        '<g class="d-eyes">' + E(EXL, EY, 7, 8.5, '#fff') + E(EXL + 1.5, EY + 1, 3.6, 4.6, '#141418') + E(EXR, EY, 6.5, 8, '#2a1d17') + E(EXR + 2, EY - 3, 2.3, 2.2, '#fff') + '</g>' +
+        nose(100, 121) + mouth('w', 100, 122) + blush({ op: 0.5 }) +
+        '<g class="d-paws">' + E(70, 168, 17, 12.5, dark, OL) + E(130, 168, 17, 12.5, light, OL) + '</g>' +
+        '<g class="d-acc">' + P('M150 28 h28 a11 11 0 0 1 0 22 h-28 a11 11 0 0 1 0 -22z', '#fff', ol(3.5)) + P('M150 28 h14 v22 h-14 a11 11 0 0 1 0 -22z', dark) + P('M150 28 h28 a11 11 0 0 1 0 22 h-28 a11 11 0 0 1 0 -22z', 'none', ol(3.5)) + E(178, 39, 7, 7, '#ffd65c', ol(3)) + '</g>';
+    },
+    echo: function (id) { // 复读机：对对对
+      var fur = '#f6d36b', dark = '#e4ae3a';
+      return P('M34 106 Q34 52 100 50 Q166 52 166 106 Q166 160 100 162 Q34 160 34 106Z', fur, OL) +
+        E(100, 132, 30, 21, '#fde7a6') + earFlop(dark) + mirror(earFlop(dark)) +
+        eyes('happy') + nose(100, 118) + mouth('open', 100, 119) + blush({ op: 0.7 }) + paws(fur) +
+        '<g class="d-acc">' + P('M140 12 h48 a10 10 0 0 1 10 10 v16 a10 10 0 0 1 -10 10 h-28 l-10 10 l2 -10 h-12 a10 10 0 0 1 -10 -10 v-16 a10 10 0 0 1 10 -10z', '#fff', ol(3.5)) +
+        P('M144 30 l4 5 l7 -9 M158 30 l4 5 l7 -9 M172 30 l4 5 l7 -9', 'none', { stroke: '#23935f', 'stroke-width': 3.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }) + '</g>';
+    },
+    rebel: function (id) { // 反骨：莫西干头 + 墨镜
+      var fur = '#7b7f8e';
+      return earPointy(fur, '#a9adbb', { t: 4 }) + mirror(earPointy(fur, '#a9adbb', { t: 4 })) +
+        P('M70 58 L76 26 L86 52 L96 18 L104 50 L116 22 L120 54 L132 30 L132 60 Z', '#ff5a6b', ol(4)) +
+        P('M34 106 Q34 52 100 50 Q166 52 166 106 Q166 160 100 162 Q34 160 34 106Z', fur, OL) +
+        E(100, 132, 30, 21, '#c4c7d1') +
+        '<g class="d-eyes">' + P('M52 98 h40 a4 4 0 0 1 4 4 v6 a14 14 0 0 1 -14 14 h-12 a18 18 0 0 1 -18 -18 v-2 a4 4 0 0 1 4 -4z', '#1d1d24', ol(3)) +
+        P('M108 98 h40 a4 4 0 0 1 4 4 v2 a18 18 0 0 1 -18 18 h-12 a14 14 0 0 1 -14 -14 v-6 a4 4 0 0 1 4 -4z', '#1d1d24', ol(3)) + P('M96 103 h8', 'none', ol(4)) +
+        P('M60 104 l10 -2 M116 104 l10 -2', 'none', { stroke: 'rgba(255,255,255,.6)', 'stroke-width': 3, 'stroke-linecap': 'round' }) + '</g>' +
+        nose(100, 123) + mouth('smirk', 100, 124) + paws(fur);
+    },
+    /* ---------- 彩蛋卡 ---------- */
+    speed: function (id) { // 闪电汪
+      var fur = '#dfe3ec';
+      return '<g class="d-acc">' + P('M14 92 h26 M6 112 h30 M16 132 h22', 'none', { stroke: '#9aa4b8', 'stroke-width': 4, 'stroke-linecap': 'round' }) + '</g>' +
+        earPointy(fur, '#ffd0d8', { t: 14 }) + mirror(earPointy(fur, '#ffd0d8', { t: 14 })) +
+        P('M34 106 Q34 52 100 50 Q166 52 166 106 Q166 160 100 162 Q34 160 34 106Z', fur, OL) + E(100, 132, 30, 21, '#f6f7fb') +
+        eyes('dot') + nose(100, 121) + mouth('tongue', 100, 122) + blush() + paws(fur) +
+        '<g class="d-acc">' + P('M172 10 L150 50 L166 50 L154 84 L186 38 L170 38 L182 10 Z', '#ffd23f', ol(3.5)) + '</g>';
+    },
+    sloth: function (id) { // 树懒汪：头顶蜗牛
+      var fur = '#c2ad94', dark = '#a48d72';
+      return P('M34 108 Q34 54 100 52 Q166 54 166 108 Q166 160 100 162 Q34 160 34 108Z', fur, OL) +
+        E(100, 132, 30, 21, '#e2d3c1') + earFlop(dark) + mirror(earFlop(dark)) +
+        eyes('closed') + nose(100, 121) + mouth('small', 100, 122) + blush() + paws(fur) +
+        '<g class="d-acc">' + P('M84 52 Q84 40 100 40 L130 40 Q140 40 140 50 Z', '#b7e0a3', ol(3.5)) + E(112, 32, 16, 15, '#f7c873', ol(3.5)) +
+        P('M112 32 m-8 0 a8 8 0 1 1 8 8 a5 5 0 1 1 -5 -5', 'none', ol(2.8)) + P('M136 42 L142 28 M142 28 l0 0', 'none', ol(3)) + E(142, 26, 2.6, 2.6, INK) + '</g>';
+    },
+    night: function (id) { // 夜猫汪：猫耳发箍 + 月亮
+      var fur = '#f3e3c3';
+      return P('M34 108 Q34 54 100 52 Q166 54 166 108 Q166 160 100 162 Q34 160 34 108Z', fur, OL) +
+        P('M48 62 Q100 34 152 62', 'none', { stroke: INK, 'stroke-width': 9, 'stroke-linecap': 'round' }) + P('M48 62 Q100 34 152 62', 'none', { stroke: '#5a4fcf', 'stroke-width': 5, 'stroke-linecap': 'round' }) +
+        P('M56 60 L58 30 L82 48 Z', '#5a4fcf', ol(3.5)) + P('M144 60 L142 30 L118 48 Z', '#5a4fcf', ol(3.5)) + P('M61 54 L62 40 L73 49 Z M139 54 L138 40 L127 49 Z', '#ffb3c1') +
+        E(100, 132, 30, 21, '#fbf1dd') + eyes('sleepy', { fur: fur }) + nose(100, 121) + mouth('w', 100, 122) + blush() + paws(fur) +
+        '<g class="d-acc">' + P('M176 14 a20 20 0 1 0 12 34 a16 16 0 1 1 -12 -34z', '#ffe066', ol(3.5)) + star(150, 22, 6, '#fff3a8') + '</g>';
+    },
+    early: function (id) { // 早起汪：身后的太阳
+      var fur = '#f4a259';
+      return '<g class="d-acc">' + E(150, 52, 30, 30, '#ffd65c', ol(3.5)) +
+        P('M150 8 v8 M186 22 l-6 6 M194 52 h-8 M114 22 l6 6', 'none', { stroke: '#f0a500', 'stroke-width': 4, 'stroke-linecap': 'round' }) + '</g>' +
+        earPointy(fur, '#ffe1c8') + mirror(earPointy(fur, '#ffe1c8')) +
+        P('M34 106 Q34 52 100 50 Q166 52 166 106 Q166 160 100 162 Q34 160 34 106Z', fur, OL) + E(100, 134, 32, 22, '#fff1e2') +
+        eyes('happy') + nose(100, 121) + mouth('tongue', 100, 122) + blush() + paws('#fff1e2');
+    },
+    again: function (id) { // 执念汪：再来一次
+      var fur = '#9fd8cb';
+      return earPointy(fur, '#e6f7f3', { t: 4 }) + mirror(earPointy(fur, '#e6f7f3', { t: 4 })) +
+        P('M34 106 Q34 52 100 50 Q166 52 166 106 Q166 160 100 162 Q34 160 34 106Z', fur, OL) + E(100, 132, 30, 21, '#e6f7f3') +
+        eyes('big') + nose(100, 121) + mouth('o', 100, 122) + blush() + paws(fur) +
+        '<g class="d-acc">' + P('M186 40 A22 22 0 1 1 168 18', 'none', { stroke: INK, 'stroke-width': 8, 'stroke-linecap': 'round' }) + P('M186 40 A22 22 0 1 1 168 18', 'none', { stroke: '#ffd65c', 'stroke-width': 4.5, 'stroke-linecap': 'round' }) +
+        P('M160 8 L172 18 L158 26 Z', '#ffd65c', ol(3)) + '</g>';
+    },
+    twin: function (id) { // 双胞胎汪
+      return '<g transform="translate(-10 46) scale(.6)">' + DOGS.tianyuan(id + 'a') + '</g>' + '<g transform="translate(90 46) scale(.6)">' + DOGS.tianyuan(id + 'b') + '</g>' +
+        '<g class="d-acc">' + heart(100, 40, 1.3) + '</g>';
+    },
+    shiny: function (id) { // 闪光汪
+      return DOGS.golden(id).replace(/#f3b655/g, '#ffd23f').replace(/#df9433/g, '#f0a500').replace(/#fbd795/g, '#fff0a8') +
+        '<g class="d-acc">' + star(30, 140, 8, '#fff3a8') + star(176, 128, 9, '#fff3a8') + star(100, 20, 7, '#fff3a8') + '</g>';
+    },
+    petter: function (id) { // 摸摸汪
+      return DOGS.bichon(id).replace(/#fffefb/g, '#ffe1ec').replace(/#fff6ec/g, '#fff0f5') +
+        '<g class="d-acc">' + heart(26, 60, 0.9, '#ff8fb1') + heart(36, 30, 0.6, '#ffb3c8') + '</g>';
+    },
+    bone: function (id) { // 叼骨头汪：抢到了进度条尽头的骨头
+      var fur = '#f6d7a7', dark = '#e2b878';
+      return P('M34 108 Q34 54 100 52 Q166 54 166 108 Q166 160 100 162 Q34 160 34 108Z', fur, OL) +
+        earFlop(dark) + mirror(earFlop(dark)) + E(100, 130, 30, 21, '#fff1dc') +
+        eyes('happy') + nose(100, 117) + blush() + paws(fur) +
+        P('M50 141 a9 9 0 1 1 9 -9 h82 a9 9 0 1 1 9 9 a9 9 0 1 1 -9 9 h-82 a9 9 0 1 1 -9 -9z', '#fffaf0', ol(4.2)) +
+        '<g class="d-acc">' + star(168, 38, 11, '#ffe066') + star(30, 48, 7, '#ffe066') + star(182, 70, 5, '#ffe066') + '</g>';
+    },
+    bilingual: function (id) { // 双语汪：会说“汪”也会说 Woof
+      var fur = '#cfe6ff', bub = 'M142 14 h40 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-18 l-10 9 l2 -9 h-14 a10 10 0 0 1 -10 -10 v-14 a10 10 0 0 1 10 -10z';
+      return earPointy(fur, '#ffd0d8', { t: 10 }) + mirror(earPointy(fur, '#ffd0d8', { t: 10 })) +
+        P('M34 108 Q34 54 100 52 Q166 54 166 108 Q166 160 100 162 Q34 160 34 108Z', fur, OL) + E(100, 132, 30, 21, '#f2f8ff') +
+        eyes('dot') + nose(100, 121) + mouth('open', 100, 122) + blush() + paws(fur) +
+        '<g class="d-acc">' + P(bub, '#fff3b8', ol(3.5)) + P('M152 31 q5 -7 10 0 t10 0 t10 0', 'none', ol(3.2)) +
+        mirror(P(bub, '#ffd6e5', ol(3.5)) + E(152, 31, 3, 3, INK) + E(162, 31, 3, 3, INK) + E(172, 31, 3, 3, INK)) + '</g>';
+    },
     mystery: function (id) { // 隐藏款：薛定谔的小狗
       var fur = '#ece7ff';
       return earPointy(fur, '#d8cfff') + earFlop('#c9bdf7').replace('<path', '<path transform="matrix(-1 0 0 1 200 0)"') +
@@ -368,9 +469,10 @@
     var id = ++uid;
     var size = opts.size ? ' width="' + opts.size + '" height="' + opts.size + '"' : '';
     var title = opts.title ? '<title>' + opts.title + '</title>' : '';
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"' + size + ' class="dog dog-' + key + (opts.cls ? ' ' + opts.cls : '') + '" role="img">' + title +
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"' + size + ' class="art art-' + key + (opts.cls ? ' ' + opts.cls : '') + '" data-art="' + key + '" role="img">' + title +
       '<g class="d-body">' + f(id) + '</g>' + (opts.shiny ? SHINY() : '') + '</svg>';
   }
 
-  window.DogArt = { svg: svg, keys: Object.keys(DOGS) };
+  var REACT = { golden: 'wag', corgi: 'twerk', samoyed: 'smile', bichon: 'spin', husky: 'howl', tianyuan: 'jump', collie: 'nod', chihuahua: 'shake', labrador: 'nod', frenchie: 'sway', poodle: 'flip', maltese: 'pop', shiba: 'scream', chow: 'nod', dachshund: 'long', akita: 'tilt', rebel: 'shake', diode: 'flip', echo: 'nod', mystery: 'spin', speed: 'shake', sloth: 'sway', night: 'sway', early: 'jump', again: 'spin', twin: 'jump', shiny: 'pop', petter: 'pop', bone: 'wag', bilingual: 'tilt' };
+  window.TI_ART = window.DogArt = { svg: svg, keys: Object.keys(DOGS), react: REACT };
 })();
