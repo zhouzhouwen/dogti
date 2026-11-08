@@ -11,13 +11,13 @@ window.TI_CONFIG = {
   // 打赏收款码（重新生成的干净二维码，不含姓名）。都留空 = 不显示打赏区
   tip: { wechat: 'assets/img/tip-wechat.png', alipay: 'assets/img/tip-alipay.png' },
 
-  // 计数：busuanzi = 用免费的「不蒜子」显示真实打开次数（国内可用，无需注册）
-  //       api = 可选的 Cloudflare Worker 完成次数计数（见 worker/README.md），填了就优先用它
+  // 计数：api = Cloudflare Worker + D1 计数器（三个测试共用，记录完成次数和类型，见 dogti 的 worker/README.md）
+  //       busuanzi = 免费的「不蒜子」打开次数；Worker 连不上（如部分大陆网络）或完成数还少时，自动改用它
   counter: {
     busuanzi: true,
     busuanziFrom: 50,    // 打开次数达到这个数之后才显示数字，之前显示"新鲜上线"
-    api: '',
-    showFrom: 0,
+    api: 'https://ti-counter.philzhouwen.workers.dev',
+    showFrom: 30,        // 完成次数达到这个数之后，首页才显示"已有 N 人测过"，之前显示打开次数
     badgeLimit: 1000,    // 前 N 位完成测试的人获得「初代」徽章
     rarityFrom: 2000     // 累计达到这个数之后，结果页显示"同款占比"
   },

@@ -1,5 +1,7 @@
--- DOGTI 计数表：每种狗狗一行，只存数量
+-- DOGTI / MATI / CITYTI 计数表：每个测试的每种类型一行，只存数量
 CREATE TABLE IF NOT EXISTS counts (
-  t TEXT PRIMARY KEY,
-  n INTEGER NOT NULL DEFAULT 0
+  site TEXT NOT NULL,
+  t TEXT NOT NULL,
+  n INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (site, t)
 ) WITHOUT ROWID;

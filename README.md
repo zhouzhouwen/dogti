@@ -12,8 +12,7 @@
 | --- | --- |
 | 关注二维码、收款码 | `assets/config.js` 的 `follow`、`tip`（图片放在 `assets/img/`） |
 | “来看看其他测试吧” | `assets/config.js` 的 `more`（三个站互相推荐，图标和二维码在 `assets/img/more/`） |
-| 首页访客人数 | `assets/config.js` 的 `counter.busuanzi`（默认开启，用免费的「不蒜子」统计真实访客） |
-| 完成次数 / 初代汪徽章 / 同款占比 | 按 `worker/README.md` 部署 Cloudflare Worker 后，填 `counter.api` |
+| 计数（完成次数、初代汪徽章、同款占比） | 已接 Cloudflare Worker + D1（`assets/config.js` 的 `counter.api`，三个测试共用，说明见 `worker/README.md`）；连不上时自动改用「不蒜子」打开次数 |
 | 百度统计 | `assets/config.js` 的 `baiduTongjiId` |
 | 题目、16 种狗狗文案、组合、隐藏款、彩蛋、界面文字 | `assets/lang-zh.js`（中文）、`assets/lang-en.js`（英文） |
 | 计分规则、隐藏款触发条件、默契值 | `assets/core.js` |
@@ -46,7 +45,7 @@ assets/app.js         答题、计分、结果页、组合、图鉴、分享图�
 assets/style.css      样式（系统字体：苹方 / SF）
 assets/qrcode.min.js  二维码生成（qrcode-generator，MIT）
 assets/img/           图标、分享封面、关注码、收款码
-worker/               可选的完成次数计数器（Cloudflare Worker + D1）
+worker/               三个测试共用的完成次数计数器（Cloudflare Worker + D1，已部署）
 ```
 
 ## 版权

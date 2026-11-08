@@ -193,6 +193,7 @@
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 3500);
     var opt = { signal: ctrl ? ctrl.signal : undefined };
     if (body) { opt.method = 'POST'; opt.headers = { 'Content-Type': 'text/plain;charset=UTF-8' }; opt.body = JSON.stringify(body); }
+    path += (path.indexOf('?') < 0 ? '?' : '&') + 's=' + encodeURIComponent(SITE.id);
     return fetch(CNT + path, opt).then(function (r) { clearTimeout(timer); return r.ok ? r.json() : null; }).catch(function () { clearTimeout(timer); return null; });
   }
   var stats = null, bsz = null, bszWait = null;
@@ -391,17 +392,23 @@
     paintCount();
   }
   function paintCount() {
-    var cfg = C.counter || {};
-    if (CNT) {
-      var paint = function (s) {
-        if (!s || typeof s.total !== 'number') return; stats = s;
-        var sp = $('#socialProof'); if (sp && s.total >= (cfg.showFrom || 0)) sp.innerHTML = t('proofCount', { n: s.total.toLocaleString(LANG === 'zh' ? 'zh-CN' : 'en-US') }) + ' · ' + t('proofBase');
-      };
-      if (stats) paint(stats); else api('/stats').then(paint);
-    } else if (cfg.busuanzi) busuanzi(function (d) {
-      var sp = $('#socialProof'), n = d && +d.page_pv; if (!sp || !n) return;
-      sp.innerHTML = (n >= (cfg.busuanziFrom || 0) ? t('proofViews', { n: n.toLocaleString(LANG === 'zh' ? 'zh-CN' : 'en-US') }) : t('proofNew')) + ' · ' + t('proofBase');
-    });
+    var cfg = C.counter || {}, loc = LANG === 'zh' ? 'zh-CN' : 'en-US';
+    function viaBsz() { // 不蒜子：真实打开次数（Worker 连不上或数量还少时用）
+      if (!cfg.busuanzi) return;
+      busuanzi(function (d) {
+        var sp = $('#socialProof'), n = d && +d.page_pv; if (!sp || !n) return;
+        sp.innerHTML = (n >= (cfg.busuanziFrom || 0) ? t('proofViews', { n: n.toLocaleString(loc) }) : t('proofNew')) + ' · ' + t('proofBase');
+      });
+    }
+    if (!CNT) { viaBsz(); return; }
+    var paint = function (s) {
+      if (!s || typeof s.total !== 'number') { viaBsz(); return; }
+      stats = s;
+      var sp = $('#socialProof');
+      if (s.total >= (cfg.showFrom || 0)) { if (sp) sp.innerHTML = t('proofCount', { n: s.total.toLocaleString(loc) }) + ' · ' + t('proofBase'); }
+      else viaBsz();
+    };
+    if (stats) paint(stats); else api('/stats').then(paint);
   }
   function comboEntry(keys) {
     return '<a class="card combo-entry" href="#pair">' + art(keys[0], { cls: 'mini' }) + art(keys[1], { cls: 'mini' }) +
@@ -570,7 +577,7 @@
   function countHit(res) {
     if (!CNT || res.counted) return;
     res.counted = true; store.set('last', res);
-    api('/hit', { t: res.code }).then(function (r) {
+    api('/hit', { s: SITE.id, t: res.code }).then(function (r) {
       if (!r || typeof r.total !== 'number') return;
       res.ordinal = r.total; res.typeCount = r.types ? r.types[res.code] : null; res.totalAtHit = r.total; stats = r;
       store.set('last', res);
