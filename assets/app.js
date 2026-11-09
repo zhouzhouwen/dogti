@@ -187,6 +187,8 @@
 
   /* ================= 计数（不蒜子访客 / 可选 Worker） ================= */
   var CNT = ((C.counter && C.counter.api) || '').replace(/\/+$/, '');
+  var CBASE = Math.max(0, Math.floor(+((C.counter || {}).base) || 0)); // 人数起点：显示 = 起点 + 真实完成次数
+  var REAL = false; try { REAL = new URLSearchParams(location.search).get('real') === '1'; } catch (e) { } // 网址加 ?real=1 看真实数字
   function api(path, body) {
     if (!CNT || !window.fetch) return Promise.resolve(null);
     var ctrl = window.AbortController ? new AbortController() : null;
@@ -419,6 +421,25 @@
   function proofJoin(x) { var b = L.ui.proofBase || ''; return [x, b].filter(Boolean).join(' · '); }
   function paintCount() {
     var cfg = C.counter || {}, loc = LANG === 'zh' ? 'zh-CN' : 'en-US';
+    function put(html) { var sp = $('#socialProof'); if (sp) sp.innerHTML = proofJoin(html); }
+    function gotStats(s) { if (!s || typeof s.total !== 'number') return false; stats = s; store.set('cnt', s.total); return true; }
+    if (REAL) { // 只给自己看：真实完成次数 + 不蒜子打开次数
+      var showReal = function () {
+        var n = stats ? stats.total : '?', pv = bsz && +bsz.page_pv;
+        put((LANG === 'zh' ? '真实完成 <b>' + n + '</b> 次' : 'Real finishes: <b>' + n + '</b>') + (pv ? ' · ' + t('proofViews', { n: pv.toLocaleString(loc) }) : ''));
+      };
+      showReal();
+      if (cfg.busuanzi) busuanzi(showReal);
+      if (CNT && !stats) api('/stats').then(function (s) { gotStats(s); showReal(); });
+      return;
+    }
+    if (CBASE) { // 先用起点 + 上次拿到的真实数立刻显示，计数器连不上也有数字
+      var showN = function (n) { put(t('proofCount', { n: (CBASE + n).toLocaleString(loc) })); };
+      showN(stats ? stats.total : +store.get('cnt', 0) || 0);
+      if (cfg.busuanzi) busuanzi(function () { }); // 打开次数照常统计，只在 ?real=1 里显示
+      if (CNT && !stats) api('/stats').then(function (s) { if (gotStats(s)) showN(s.total); });
+      return;
+    }
     function viaBsz() { // 不蒜子：真实打开次数（Worker 连不上或数量还少时用）
       if (!cfg.busuanzi) return;
       busuanzi(function (d) {
@@ -608,7 +629,7 @@
     api('/hit', { s: SITE.id, t: res.code }).then(function (r) {
       if (!r || typeof r.total !== 'number') return;
       res.ordinal = r.total; res.typeCount = r.types ? r.types[res.code] : null; res.totalAtHit = r.total; stats = r;
-      store.set('last', res);
+      store.set('last', res); store.set('cnt', r.total);
       if (current === 'result') renderBadges(res);
     });
   }
@@ -619,13 +640,14 @@
     return '<div class="bar-row"><div class="bar-top"><span>' + esc(d.loLabel) + '</span><b>' + esc(d.name) + ' ' + p + '%</b><span>' + esc(d.hiLabel) + '</span></div>' +
       '<div class="bar"><i style="background:' + DIMC[k] + '" data-w="' + p + '"></i></div>' + (withText ? '<p>' + esc(L.dimText[k][bucket(p)]) + '</p>' : '') + '</div>';
   }
+  function shownOrd(res) { return res.ordinal ? res.ordinal + CBASE : 0; } // 和首页人数同一套数字
   function renderBadges(res) {
     var el = $('#rBadges'); if (!el) return;
-    var h = '', c = C.counter || {};
+    var h = '', c = C.counter || {}, ord = shownOrd(res);
     if (res.shiny) h += '<span class="badge badge-gold">' + t('badgeShiny') + '</span>';
     if (res.hidden) h += '<span class="badge badge-rare">' + t('badgeHidden') + '</span>';
-    if (res.ordinal && res.ordinal <= (c.badgeLimit || 1000)) h += '<span class="badge badge-og">' + t('badgeOG', { n: res.ordinal }) + '</span>';
-    else if (res.ordinal) h += '<span class="badge">' + t('badgeNth', { n: res.ordinal.toLocaleString() }) + '</span>';
+    if (ord && ord <= (c.badgeLimit || 1000)) h += '<span class="badge badge-og">' + t('badgeOG', { n: ord }) + '</span>';
+    else if (ord) h += '<span class="badge">' + t('badgeNth', { n: ord.toLocaleString(LANG === 'zh' ? 'zh-CN' : 'en-US') }) + '</span>';
     if (res.typeCount && res.totalAtHit >= (c.rarityFrom || 2000)) { var share = res.typeCount / res.totalAtHit * 100; h += '<span class="badge">' + t('badgeRare', { p: share.toFixed(1) }) + (share < 4 ? t('rare') : '') + '</span>'; }
     el.innerHTML = h; el.hidden = !h;
   }
@@ -940,7 +962,7 @@
         ctx.font = F('800', 22); ctx.fillStyle = INK; ctx.fillText(p + '%', tx + tw + 10, yy + 20);
       });
       var stamps = []; if (res.shiny) stamps.push([t('badgeShiny').replace('✦ ', ''), '#ffd45c']); if (H) stamps.push([t('badgeHidden'), '#a99bff']);
-      var c = C.counter || {}; if (res.ordinal && res.ordinal <= (c.badgeLimit || 1000)) stamps.push([t('badgeOG', { n: res.ordinal }), '#79dcc8']);
+      var c = C.counter || {}, ord = shownOrd(res); if (ord && ord <= (c.badgeLimit || 1000)) stamps.push([t('badgeOG', { n: ord }), '#79dcc8']);
       stamps.forEach(function (s, i) {
         ctx.save(); ctx.translate(i % 2 ? 200 : W - 200, 300 + Math.floor(i / 2) * 110); ctx.rotate(i % 2 ? -0.2 : 0.2);
         ctx.font = F('900', 34); var sw = ctx.measureText(s[0]).width + 46;

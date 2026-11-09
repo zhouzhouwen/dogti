@@ -303,7 +303,7 @@ window.TI_LANG.en = {
   "s5t": "Secret dogs & Easter eggs",
   "s5b": "4 secret dogs are summoned by special ways of answering, and 10 Easter egg cards hide in your speed, the clock, the progress bar, your language and the dogs themselves. Every dog on this site can be petted. Hints are in the collection.",
   "pt": "Privacy",
-  "pb": "Your answers are scored on your device and never uploaded. To show visitor numbers, the site only counts finished quizzes and the result type (e.g. \"Golden Retriever\"); no IP, name or personal info is stored. The open count on the home page comes from Busuanzi, a third-party counter. Your result lives in your own browser; clearing browser data deletes it.",
+  "pb": "Your answers are scored on your device and never uploaded. The site only counts finished quizzes and the result type (e.g. \"Golden Retriever\"); no IP, name or personal info is stored. Page opens are counted by Busuanzi, a third-party counter. Your result lives in your own browser; clearing browser data deletes it.",
   "rt": "References",
   "ct": "Credits",
   "cb": "All DOGTI copy and dog illustrations are original; the questions are adapted from the public-domain IPIP. Please credit when sharing. QR codes by qrcode-generator (MIT)."

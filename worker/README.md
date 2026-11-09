@@ -14,12 +14,13 @@ DOGTI、MATI、CITYTI 共用一个计数器，已经部署在你的 Cloudflare �
 ## 它做什么
 
 - 每完成一次测试，记一笔「哪个测试 + 测出的类型代码」（例如 `mati / HHLH`）。不记录 IP、不记录作答、不设 Cookie。
-- 首页：完成次数达到 `counter.showFrom`（默认 30）后，显示「已有 N … 来报到」；之前显示不蒜子的打开次数。
-- 结果页：前 1000 位显示「初代 · 第 N 位」徽章；累计 2000 次后显示「同款占比」。
+- 首页：显示「已有 N … 来报到」，N = `counter.base` + 真实完成次数。`base` 在各站的 `assets/config.js` 里改；改成 0 就只显示真实数字（完成数到 `showFrom` 之前显示不蒜子的打开次数）。
+- 结果页：显示「你是第 N 位」，同样按 `base` + 真实序号算（`base` 为 0 时，前 1000 位显示「初代」徽章）；真实完成 2000 次后显示「同款占比」。
+- 看真实数字：网址后面加 `?real=1`，例如 https://zhouzhouwen.github.io/dogti/?real=1 ，首页会显示真实完成次数和不蒜子的打开次数。
 
 ## 先知道两件事
 
-1. **大陆访问**：`*.workers.dev` 在中国大陆部分网络连不上。连不上时网站照常出结果，首页自动改用不蒜子的打开次数，只是这次完成不计数。
+1. **大陆访问**：`*.workers.dev` 在中国大陆部分网络连不上。连不上时网站照常出结果，首页照样显示人数（`base` 加上这台手机上次拿到的真实数），只是这次完成不计数。
    想让大陆用户也稳定计数，需要买一个自己的域名，在 Worker →「设置 → 域和路由」里绑定自定义域，再把新地址填进三个站的 `counter.api`。
 2. **免费额度**：Workers 免费档每天 10 万次请求，D1 免费档每天 10 万行写入。超额后当天的计数请求会失败，网站不受影响。
    额度以 Cloudflare 官方页面为准：https://developers.cloudflare.com/workers/platform/pricing/ ， https://developers.cloudflare.com/d1/platform/pricing/
