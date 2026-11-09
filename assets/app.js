@@ -253,15 +253,39 @@
     }
     bubbleAt(svg, text);
     if (!superHit && ev && ev.clientX) floaties(ev.clientX, ev.clientY, 3);
-    var pets = store.get('pets', 0) + 1; store.set('pets', pets);
+    var pets = store.get('pets', 0) + 1; store.set('pets', pets); sessPets++;
     if (pets >= R.petterTaps) unlockEgg(CORE.petEgg);
+    else if (!eggDone(CORE.petEgg) && (pets === 1 || pets === 10 || pets === 20 || pets === 26) && L.ui.hintPetMore) toast(t('hintPetMore', { n: R.petterTaps - pets, egg: EGG(CORE.petEgg).name }), 2200);
   }
   // 首页的角色每隔几秒自己动一下，提示“可以摸”
   setInterval(function () {
     if (reduced || current !== 'home' || document.hidden) return;
     var arts = $$('#s-home .hero-art svg.art');
-    if (arts.length) playReact(arts[Math.floor(Math.random() * arts.length)]);
+    if (!arts.length) return;
+    var a = arts[Math.floor(Math.random() * arts.length)]; playReact(a);
+    idleTick++;
+    if (idleTick % 2 === 0 && !sessPets && !eggDone(CORE.petEgg)) hintAt(a, t('hintPet'));
   }, 6500);
+  var idleTick = 0;
+  // 彩蛋提示：在可以点的地方自己冒出来
+  function hintAt(el, text, ms) {
+    if (!el || !text || !document.body.contains(el)) return;
+    var r = el.getBoundingClientRect(), below = r.top < 110;
+    var b = document.createElement('div'); b.className = 'pop-bubble hint-bubble' + (below ? ' below' : ''); b.textContent = text;
+    b.style.left = '0px'; b.style.top = '0px'; document.body.appendChild(b);
+    var vw = document.documentElement.clientWidth, w = Math.min(b.offsetWidth, vw - 16), cx = r.left + r.width / 2;
+    cx = Math.max(8 + w / 2, Math.min(vw - 8 - w / 2, cx));
+    b.style.left = (cx + window.scrollX) + 'px'; b.style.top = ((below ? r.bottom + 8 : r.top - 4) + window.scrollY) + 'px';
+    setTimeout(function () { b.remove(); }, ms || 2800);
+  }
+  function eggDone(id) { return !id || !CORE.eggs[id] || !!eggsGot()[id]; }
+  var sessPets = 0, langHinted = false;
+  function homeHints() {
+    if (current !== 'home') return;
+    if (!eggDone(CORE.petEgg) && !sessPets) hintAt($('#s-home .hero-art .art-main'), t('hintPet'));
+    var lg = CORE.eggTriggers.lang;
+    if (lg && !eggDone(lg) && !langHinted) { langHinted = true; setTimeout(function () { if (current === 'home') hintAt($('#s-home .lang-btn'), t('hintLang'), 3200); }, 3400); }
+  }
   function bubbleAt(el, text) {
     if (el._bubble) el._bubble.remove();
     var r = el.getBoundingClientRect(), b = document.createElement('div');
@@ -368,7 +392,7 @@
     if (prog && prog.ans && prog.i > 0 && Date.now() - prog.t < 864e5) {
       html += '<button class="btn btn-big" id="resumeBtn">' + t('resume', { i: prog.i + 1, n: N_ITEMS }) + '</button><button class="btn btn-white btn-sm" id="startBtn">' + t('restart') + '</button>';
     } else html += '<button class="btn btn-big" id="startBtn">' + t('start') + ' <span class="arrow">→</span></button>';
-    html += '<p class="social-proof" id="socialProof">' + t('proofBase') + '</p>';
+    html += '<p class="social-proof" id="socialProof">' + proofJoin('') + '</p>';
     if (last) {
       var lt = last.hidden ? HID(last.hidden) : TY(last.code);
       html += '<p class="last-result">' + t('lastResult') + '<a href="#result">' + esc(lt.breed) + ' · ' + esc(lt.nick) + '</a></p>';
@@ -378,7 +402,7 @@
     html += comboEntry(SITE.combo);
     html += '<div class="card home-info"><p>' + t('homeInfo1') + '</p><p class="muted">' + t('homeInfo2') + '</p><p class="muted">' + t('homeInfo3') + '</p></div>';
     html += moreHTML() + followHTML();
-    html += '<footer class="foot"><a href="#about">' + t('footAbout') + '</a> · <a href="#about" data-goto="privacy">' + t('footPrivacy') + '</a></footer>';
+    html += '<footer class="foot"><a href="#about">' + t('footAbout') + '</a></footer>';
     el.innerHTML = html;
     $('#startBtn').addEventListener('click', function () { store.del('progress'); startQuiz(false); });
     var rb = $('#resumeBtn'); if (rb) rb.addEventListener('click', function () { resumeQuiz(); });
@@ -390,14 +414,16 @@
       });
     });
     paintCount();
+    setTimeout(homeHints, 1300);
   }
+  function proofJoin(x) { var b = L.ui.proofBase || ''; return [x, b].filter(Boolean).join(' · '); }
   function paintCount() {
     var cfg = C.counter || {}, loc = LANG === 'zh' ? 'zh-CN' : 'en-US';
     function viaBsz() { // 不蒜子：真实打开次数（Worker 连不上或数量还少时用）
       if (!cfg.busuanzi) return;
       busuanzi(function (d) {
         var sp = $('#socialProof'), n = d && +d.page_pv; if (!sp || !n) return;
-        sp.innerHTML = (n >= (cfg.busuanziFrom || 0) ? t('proofViews', { n: n.toLocaleString(loc) }) : t('proofNew')) + ' · ' + t('proofBase');
+        sp.innerHTML = proofJoin(n >= (cfg.busuanziFrom || 0) ? t('proofViews', { n: n.toLocaleString(loc) }) : t('proofNew'));
       });
     }
     if (!CNT) { viaBsz(); return; }
@@ -405,7 +431,7 @@
       if (!s || typeof s.total !== 'number') { viaBsz(); return; }
       stats = s;
       var sp = $('#socialProof');
-      if (s.total >= (cfg.showFrom || 0)) { if (sp) sp.innerHTML = t('proofCount', { n: s.total.toLocaleString(loc) }) + ' · ' + t('proofBase'); }
+      if (s.total >= (cfg.showFrom || 0)) { if (sp) sp.innerHTML = proofJoin(t('proofCount', { n: s.total.toLocaleString(loc) })); }
       else viaBsz();
     };
     if (stats) paint(stats); else api('/stats').then(paint);
@@ -422,7 +448,7 @@
         (f.xhs ? '<figure><img src="' + esc(f.xhs) + '" alt="' + t('xhs') + '" loading="lazy"><figcaption>' + t('xhs') + '<small>' + t('xhsHint') + '</small></figcaption></figure>' : '') + '</div></div>';
     }
     if (tp.wechat || (tp.alipay && !isWeChat)) {
-      h += '<details class="card tip"><summary>' + t('tipTitle') + '</summary><div class="qr-row">' +
+      h += '<details class="card tip" open><summary>' + t('tipTitle') + '</summary><div class="qr-row">' +
         (tp.wechat ? '<figure><img src="' + esc(tp.wechat) + '" alt="' + t('wechatPay') + '" loading="lazy"><figcaption>' + t('wechatPay') + '</figcaption></figure>' : '') +
         (tp.alipay && !isWeChat ? '<figure><img src="' + esc(tp.alipay) + '" alt="' + t('alipay') + '" loading="lazy"><figcaption>' + t('alipay') + '</figcaption></figure>' : '') + '</div></details>';
     }
@@ -506,6 +532,8 @@
       return '<button class="opt' + (Q.ans[Q.i] === v ? ' sel' : '') + '" type="button" data-v="' + v + '"><span class="paw">' + pawIcon(v) + '</span>' + esc(lab) + '</button>';
     }).join('');
     if (animate) { var c = $('#qCard'); c.classList.remove('swap'); void c.offsetWidth; c.classList.add('swap'); }
+    var g = CORE.eggTriggers.goal;
+    if ((Q.i === 0 || Q.i === 9) && g && !eggDone(g) && L.ui.hintGoal) setTimeout(function () { if (current === 'quiz') hintAt($('#pGoal'), t('hintGoal'), 2600); }, 700);
   }
   var answering = false;
   function answer(v) {
@@ -601,6 +629,18 @@
     if (res.typeCount && res.totalAtHit >= (c.rarityFrom || 2000)) { var share = res.typeCount / res.totalAtHit * 100; h += '<span class="badge">' + t('badgeRare', { p: share.toFixed(1) }) + (share < 4 ? t('rare') : '') + '</span>'; }
     el.innerHTML = h; el.hidden = !h;
   }
+  function eggTipsHTML() {
+    if (!L.ui.tipsTitle) return '';
+    var eg = eggsGot(), hf = store.get('hiddenFound', {}), todo = [];
+    CORE.eggOrder.forEach(function (id) { if (!eg[id]) todo.push(EGG(id)); });
+    CORE.hiddenOrder.forEach(function (h) { if (!hf[h]) todo.push(HID(h)); });
+    var total = CORE.eggOrder.length + CORE.hiddenOrder.length, got = total - todo.length;
+    if (!todo.length) return '';
+    todo.sort(function () { return Math.random() - 0.5; });
+    return '<div class="card rsec egg-tips"><h3 class="sec-title">' + t('tipsTitle') + '</h3><p class="muted small" style="margin:-6px 0 8px">' + t('tipsProgress', { a: got, b: total }) + '</p><ul class="tip-list">' +
+      todo.slice(0, 4).map(function (x) { return '<li style="--tbg:' + x.bg + '">' + art(x.art, { cls: 'tip-art' }) + '<span>' + esc(x.hint) + '</span></li>'; }).join('') +
+      '</ul><a class="more-link" href="#gallery">' + t('tipsMore') + '</a></div>';
+  }
   function list(arr) { return '<ul>' + arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
   function shown(res) { return res.hidden ? HID(res.hidden) : TY(res.code); }
   function renderResult(res) {
@@ -645,6 +685,7 @@
     html += '<div class="card rsec growth" style="--tbg:' + ty.bg + '"><h3 class="sec-title">' + t('secGrowth') + '</h3><p>' + esc(ty.growth) + '</p></div>';
     html += '<div class="card rsec manual"><h3 class="sec-title">' + t('secManual', { b: esc(ty.breed) }) + '</h3><div class="two-in"><div><h4>✅ ' + t('manualDo') + '</h4>' + list(ty.tips) + '</div><div><h4>⛔ ' + t('manualDont') + '</h4>' + list(ty.peeves) + '</div></div>' +
       '<button class="btn btn-white btn-sm" id="cpManual" type="button">' + t('copyManual') + '</button></div>';
+    html += eggTipsHTML();
     html += '<div class="card rsec share-box"><h3 class="sec-title">' + t('secShare') + '</h3><p>' + t('shareDesc') + '</p>' +
       '<input id="nickInput" maxlength="12" placeholder="' + esc(t('nickPh')) + '" value="' + esc(store.sget('nick', '')) + '">' +
       '<button class="btn btn-big" id="mkCard2" type="button" style="margin-top:12px">' + t('mkCard') + '</button>' +
@@ -655,6 +696,7 @@
       CORE.refs.map(function (r) { return '<li>' + esc(r.cite) + (r.doi ? ' <a href="https://doi.org/' + r.doi + '" target="_blank" rel="noopener">doi:' + r.doi + '</a>' : '') + '</li>'; }).join('') + '</ol></details>';
     el.innerHTML = html;
     renderBadges(res);
+    if (!eggDone(CORE.petEgg) && !store.sget('resHint', 0)) { store.sset('resHint', 1); setTimeout(function () { if (current === 'result' && window.scrollY < 200) hintAt($('#s-result .r-art .art'), t('hintPet')); }, 2600); }
     setTimeout(function () { $$('.bar i', el).forEach(function (i) { i.style.width = i.dataset.w + '%'; }); }, 120);
     $$('.tab', el).forEach(function (b) { b.addEventListener('click', function () { $$('.tab', el).forEach(function (x) { x.classList.toggle('on', x === b); }); $('#tabBody').textContent = ty[b.dataset.tab]; }); });
     $('#cpManual').addEventListener('click', function () {
