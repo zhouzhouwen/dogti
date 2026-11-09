@@ -1,6 +1,6 @@
 # DOGTI 狗格测试
 
-测测你是哪种性格的小狗。28 道题 · 16 种原创小狗 · 4 张隐藏款 · 10 张彩蛋卡 · 中文 / English。
+测测你是哪种性格的小狗。28 道题 · 16 种原创小狗 · 3 种隐藏款 · 10 张彩蛋 · 中文 / English。
 
 姐妹测试：[MATI 马格测试](https://zhouzhouwen.github.io/mati/) · [CITYTI 城格测试](https://zhouzhouwen.github.io/cityti/)（三个站共用同一套引擎 `assets/app.js` + `assets/style.css`）
 

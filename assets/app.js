@@ -132,12 +132,10 @@
     });
     var code = TK.map(function (k) { return poles[k]; }).join('');
     var near = TK.filter(function (k) { return Math.abs(sums[k]) <= 1; }).sort(function (a, b) { return Math.abs(sums[a]) - Math.abs(sums[b]); });
-    var hidden = null;
-    if (neutral >= R.mysteryNeutral) hidden = CORE.hiddenOrder[0];
-    else if (agree >= R.echoAgree) hidden = CORE.hiddenOrder[1];
-    else if (disagree >= R.rebelDisagree) hidden = CORE.hiddenOrder[2];
-    else if (extreme >= R.diodeExtreme) hidden = CORE.hiddenOrder[3];
-    var counts = {}; counts[CORE.hiddenOrder[0]] = neutral; counts[CORE.hiddenOrder[1]] = agree; counts[CORE.hiddenOrder[2]] = disagree; counts[CORE.hiddenOrder[3]] = extreme;
+    // 隐藏款看作答方式：按 hiddenOrder 的顺序，第一个达到门槛的生效（core.js 里没有的隐藏款不会触发）
+    var tally = { mystery: [neutral, R.mysteryNeutral], echo: [agree, R.echoAgree], rebel: [disagree, R.rebelDisagree], diode: [extreme, R.diodeExtreme] };
+    var hidden = null, counts = {};
+    CORE.hiddenOrder.forEach(function (h) { var x = tally[h]; if (!x) return; counts[h] = x[0]; if (!hidden && x[1] && x[0] >= x[1]) hidden = h; });
     return {
       v: 2, code: code, c: poles[MD], sums: sums, pct: pct,
       alt: near.length ? flip(code, near[0]) : null, altDim: near.length ? near[0] : null,
@@ -183,7 +181,11 @@
     return u;
   }
   function addMet(code, byFriend) { var m = store.get('met', {}); if (!m[code] || (!byFriend && m[code] === 'f')) { m[code] = byFriend ? (m[code] || 'f') : 'y'; store.set('met', m); } }
-  function lastRes() { var r = store.get('last', null); return r && r.v === 2 && CORE.types[r.code] ? r : null; }
+  function lastRes() {
+    var r = store.get('last', null); if (!(r && r.v === 2 && CORE.types[r.code])) return null;
+    if (r.hidden && !CORE.hidden[r.hidden]) r.hidden = null; // 已下线的隐藏款按普通类型显示
+    return r;
+  }
 
   /* ================= 计数（不蒜子访客 / 可选 Worker） ================= */
   var CNT = ((C.counter && C.counter.api) || '').replace(/\/+$/, '');
@@ -389,7 +391,10 @@
       '<h1 class="logo" aria-label="' + SITE.name + '">' + SITE.name.split('').map(function (ch) { return '<span>' + ch + '</span>'; }).join('') + '</h1>' +
       '<p class="hero-sub">' + t('heroSub') + '</p><div class="hero-art">' +
       art(SITE.hero[0], { cls: 'art-l' }) + art(SITE.hero[1], { cls: 'art-main' }) + art(SITE.hero[2], { cls: 'art-r' }) + '</div></div>';
-    html += '<p class="sell">' + t('sell') + '</p><div class="chips">' + L.ui.chips.map(function (c, i) { return '<span class="chip' + (i === 3 ? ' chip-hot' : '') + '">' + c + '</span>'; }).join('') + '</div>';
+    // 第一行：题数、时长、类型数；第二行：隐藏款、彩蛋
+    var chip = function (c, i) { return '<span class="chip' + (i >= 3 ? ' chip-hot' : '') + '">' + c + '</span>'; };
+    html += '<p class="sell">' + t('sell') + '</p><div class="chips">' + L.ui.chips.slice(0, 3).map(chip).join('') + '</div>' +
+      (L.ui.chips.length > 3 ? '<div class="chips chips-2">' + L.ui.chips.slice(3).map(function (c, i) { return chip(c, i + 3); }).join('') + '</div>' : '');
     var prog = store.get('progress', null);
     if (prog && prog.ans && prog.i > 0 && Date.now() - prog.t < 864e5) {
       html += '<button class="btn btn-big" id="resumeBtn">' + t('resume', { i: prog.i + 1, n: N_ITEMS }) + '</button><button class="btn btn-white btn-sm" id="startBtn">' + t('restart') + '</button>';
@@ -689,6 +694,7 @@
         res.newEggsShown.map(function (id) { var e = EGG(id); return '<div class="egg-mini" style="--tbg:' + e.bg + '">' + art(e.art) + '<b>' + esc(e.name) + '</b><em>' + esc(e.nick) + '</em></div>'; }).join('') + '</div></div>';
       res.newEggsShown = []; store.set('last', res);
     }
+    if (H && H.why) html += '<div class="card rsec why-card" style="--tbg:' + H.bg + '"><h3 class="sec-title">' + t('whyTitle') + '</h3><p>' + esc(H.why) + '</p><a class="more-link" href="#about" data-goto="hiddenWhy">' + t('whyMore') + '</a></div>';
     html += '<div class="card rsec desc" style="--tbg:' + ty.bg + '"><h3 class="sec-title">' + (H ? t('secDescNearest', { b: esc(ty.breed) }) : t('secDesc')) + '</h3>' +
       ty.desc.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '<div class="tags">' + ty.tags.map(function (g) { return '<span>#' + esc(g) + '</span>'; }).join('') + '</div></div>';
     html += '<div class="card rsec"><h3 class="sec-title">' + t('secSkills') + '</h3><div class="skills">' +
@@ -1046,20 +1052,33 @@
         (mk ? '<span class="stamp' + (mk === 'f' ? ' f' : '') + '">' + (mk === 'f' ? t('metFriend') : t('met')) + '</span>' : '') + art(ty.art) +
         '<b>' + esc(ty.breed) + '</b><em>' + esc(ty.nick) + '</em><span class="code">' + codeChars(c).join('') + '</span></div>';
     }).join('') + '</div>';
-    html += '<h3 class="gal-h">' + t('galHidden') + ' <span>' + nHid + '/' + CORE.hiddenOrder.length + '</span></h3><p class="muted small">' + t('galHiddenSub') + '</p><div class="gallery">';
-    html += CORE.hiddenOrder.map(function (h) { var x = HID(h), ok = !!hf[h]; return '<div class="g-card' + (ok ? '' : ' locked') + '" data-hidden="' + h + '" style="--tbg:' + x.bg + '">' + art(x.art) + '<b>' + (ok ? esc(x.breed) : t('locked')) + '</b><em>' + esc(ok ? x.nick : x.hint) + '</em></div>'; }).join('') + '</div>';
-    html += '<h3 class="gal-h">' + t('galEggs') + ' <span>' + nEgg + '/' + CORE.eggOrder.length + '</span></h3><p class="muted small">' + t('galEggsSub') + '</p><div class="gallery">';
-    html += CORE.eggOrder.map(function (id) { var x = EGG(id), ok = !!eg[id]; return '<div class="g-card' + (ok ? '' : ' locked') + '" data-egg="' + id + '" style="--tbg:' + x.bg + '">' + art(x.art) + '<b>' + (ok ? esc(x.name) : t('locked')) + '</b><em>' + esc(ok ? x.nick : x.hint) + '</em></div>'; }).join('') + '</div>';
+    // 隐藏款、彩蛋：名字和解锁方法都直接写出来；解锁后盖章、换成昵称
+    function specialCard(kind, id) {
+      var x = kind === 'hidden' ? HID(id) : EGG(id), ok = kind === 'hidden' ? !!hf[id] : !!eg[id];
+      return '<div class="g-card' + (ok ? '' : ' locked') + '" data-' + kind + '="' + id + '" style="--tbg:' + x.bg + '">' + (ok ? '<span class="stamp">' + t('unlocked') + '</span>' : '') + art(x.art) +
+        '<b>' + esc(kind === 'hidden' ? x.breed : x.name) + '</b><em>' + esc(ok ? x.nick : howTo(x)) + '</em></div>';
+    }
+    html += '<h3 class="gal-h">' + t('galHidden') + ' <span>' + nHid + '/' + CORE.hiddenOrder.length + '</span></h3><p class="muted small gal-intro">' + t('galHiddenSub') +
+      ' <a class="more-link" href="#about" data-goto="hiddenWhy">' + t('galHiddenWhy') + '</a></p><div class="gallery">';
+    html += CORE.hiddenOrder.map(function (h) { return specialCard('hidden', h); }).join('') + '</div>';
+    html += '<h3 class="gal-h">' + t('galEggs') + ' <span>' + nEgg + '/' + CORE.eggOrder.length + '</span></h3><p class="muted small gal-intro">' + t('galEggsSub') + '</p><div class="gallery">';
+    html += CORE.eggOrder.map(function (id) { return specialCard('egg', id); }).join('') + '</div>';
     html += moreHTML();
     el.innerHTML = html;
     $$('.g-card[data-code]', el).forEach(function (g) { g.addEventListener('click', function (e) { if (e.target.closest('svg.art')) return; openType(g.dataset.code); }); });
     $$('.g-card[data-hidden]', el).forEach(function (g) { g.addEventListener('click', function (e) { if (e.target.closest('svg.art')) return; openSpecial('hidden', g.dataset.hidden); }); });
     $$('.g-card[data-egg]', el).forEach(function (g) { g.addEventListener('click', function (e) { if (e.target.closest('svg.art')) return; openSpecial('egg', g.dataset.egg); }); });
   }
+  function howTo(x) { var s = String(x.hint || '').replace(/^(提示[:：]\s*|Hint:\s*)/i, ''); return s.charAt(0).toUpperCase() + s.slice(1); }
   function openSpecial(kind, id) {
-    var x = kind === 'hidden' ? HID(id) : EGG(id), ok = kind === 'hidden' ? !!store.get('hiddenFound', {})[id] : !!eggsGot()[id];
-    openSheet('<div class="special' + (ok ? '' : ' locked') + '" style="--tbg:' + x.bg + '">' + art(x.art) + '<h3 class="page-title">' + (ok ? esc(kind === 'hidden' ? x.breed : x.name) : t(kind === 'hidden' ? 'hiddenLocked' : 'eggLocked')) + '</h3>' +
-      (ok ? '<div class="r-nick" style="--tac:' + x.ac + '">' + esc(x.nick) + '</div><p>' + esc(kind === 'hidden' ? x.tagline : x.desc) + '</p>' : '<p>' + esc(x.hint) + '</p>') + '</div>');
+    var H = kind === 'hidden', x = H ? HID(id) : EGG(id), ok = H ? !!store.get('hiddenFound', {})[id] : !!eggsGot()[id];
+    openSheet('<div class="special' + (ok ? '' : ' locked') + '" style="--tbg:' + x.bg + '">' + art(x.art) +
+      '<span class="r-kicker">' + t(H ? 'hiddenLocked' : 'eggLocked') + (ok ? ' · ' + t('unlocked') : '') + '</span>' +
+      '<h3 class="page-title">' + esc(H ? x.breed : x.name) + '</h3>' +
+      (ok ? '<div class="r-nick" style="--tac:' + x.ac + '">' + esc(x.nick) + '</div><p>' + esc(H ? x.tagline : x.desc) + '</p>' : '') +
+      '<p class="how"><b>' + t('howLabel') + '</b>' + esc(howTo(x)) + '</p>' +
+      (H ? '<p class="how"><b>' + t('whyLabel') + '</b>' + esc(x.why) + ' <a class="more-link" href="#about" data-goto="hiddenWhy">' + t('whyMore') + '</a></p>' : '<p class="how"><b>' + t('eggNoteLabel') + '</b>' + t('eggNote') + '</p>') +
+      '</div>');
   }
   function openType(code) {
     var ty = TY(code); if (!ty) return;
@@ -1086,7 +1105,7 @@
       '<div class="card fun-fact"><h3>' + A.s2t + '</h3><p>' + A.s2b + '</p></div>' +
       '<div class="card"><h3>' + A.s3t + '</h3><ul>' + A.s3l.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' +
       '<div class="card"><h3>' + A.s4t + '</h3><p>' + A.s4b + '</p></div>' +
-      '<div class="card"><h3>' + A.s5t + '</h3><p>' + A.s5b + '</p></div>' +
+      '<div class="card" id="hiddenWhy"><h3>' + A.s5t + '</h3><p>' + A.s5b + '</p>' + (A.s5l ? '<ul>' + A.s5l.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' : '') + '</div>' +
       '<div class="card" id="privacy"><h3>' + A.pt + '</h3><p>' + A.pb + '</p></div>' +
       '<div class="card"><h3>' + A.rt + '</h3><ol class="refs">' + CORE.refs.map(function (r, i) {
         return '<li><span class="cite">' + esc(r.cite) + (r.doi ? ' <a href="https://doi.org/' + r.doi + '" target="_blank" rel="noopener">https://doi.org/' + r.doi + '</a>' : '') + '</span><span class="note">' + esc(L.refNotes[i]) + '</span></li>';

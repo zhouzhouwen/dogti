@@ -15,7 +15,8 @@ window.TI_LANG.en = {
    "28 Qs",
    "~3 min",
    "16 dogs",
-   "14 secret cards"
+   "3 secret dogs",
+   "10 Easter eggs"
   ],
   "start": "Start the quiz",
   "proofBase": "",
@@ -175,9 +176,9 @@ window.TI_LANG.en = {
   "galTypes": "16 Dogs",
   "galMetHint": "Dogs you got get a \"Met\" stamp; dogs your friends brought get a \"Friend\" stamp",
   "galHidden": "Secret Dogs",
-  "galHiddenSub": "Follow the hints to summon them",
-  "galEggs": "Easter Egg Cards",
-  "galEggsSub": "Hidden in your speed, the clock, the progress bar, your language and the dogs themselves",
+  "galHiddenSub": "Secret dogs depend on how you answer, not on your personality. When one shows up, it replaces your regular dog as your result.",
+  "galEggs": "Easter Eggs",
+  "galEggsSub": "Easter eggs are collectibles you unlock by playing around. They have nothing to do with personality and never change your result. Follow the steps on each card to unlock it.",
   "met": "Met",
   "locked": "???",
   "tryType": "Am I this dog? Take the quiz",
@@ -218,9 +219,17 @@ window.TI_LANG.en = {
   "hintPetMore": "{n} more pats to unlock \"{egg}\"",
   "hintGoal": "Tap me 3 times!",
   "hintLang": "Switch languages once for a surprise!",
-  "tipsTitle": "Easter eggs still waiting for you",
-  "tipsProgress": "{a} of {b} secret cards unlocked",
-  "tipsMore": "See them all →"
+  "tipsTitle": "Secret dogs and Easter eggs still waiting for you",
+  "tipsProgress": "{a} of {b} unlocked",
+  "tipsMore": "See them all →",
+  "galHiddenWhy": "Why secret dogs exist →",
+  "unlocked": "Unlocked",
+  "howLabel": "How to unlock",
+  "whyLabel": "Why it's a secret dog",
+  "whyTitle": "Why a secret dog?",
+  "whyMore": "See the science →",
+  "eggNoteLabel": "Does it change my result?",
+  "eggNote": "No. Easter eggs are just for fun and have nothing to do with personality."
  },
  "dims": {
   "E": {
@@ -300,13 +309,21 @@ window.TI_LANG.en = {
   ],
   "s4t": "Every dog is one of a kind",
   "s4b": "A study of 18,385 dogs found that breed explains only about 9% of the behavioral differences between individual dogs (Morrill et al., 2022). Every dog is its own unique self, and so are you.",
-  "s5t": "Secret dogs & Easter eggs",
-  "s5b": "4 secret dogs are summoned by special ways of answering, and 10 Easter egg cards hide in your speed, the clock, the progress bar, your language and the dogs themselves. Every dog on this site can be petted. Hints are in the collection.",
+  "s5t": "Where secret dogs and Easter eggs come from",
+  "s5b": "Secret dogs and Easter eggs are two different things. A secret dog depends on how you answer and replaces your regular dog as your result. Easter eggs are collectibles you unlock by playing around, and they don't affect your result.",
   "pt": "Privacy",
   "pb": "Your answers are scored on your device and never uploaded. The site only counts finished quizzes and the result type (e.g. \"Golden Retriever\"); no IP, name or personal info is stored. Page opens are counted by Busuanzi, a third-party counter. Your result lives in your own browser; clearing browser data deletes it.",
   "rt": "References",
   "ct": "Credits",
-  "cb": "All DOGTI copy and dog illustrations are original; the questions are adapted from the public-domain IPIP. Please credit when sharing. QR codes by qrcode-generator (MIT)."
+  "cb": "All DOGTI copy and dog illustrations are original; the questions are adapted from the public-domain IPIP. Please credit when sharing. QR codes by qrcode-generator (MIT).",
+  "s5l": [
+   "<b>Schrödinger's Pup</b>: \"Hard to say\" on 15+ questions. Psychologists call this midpoint responding. With more than half the questions left neutral, each trait rests on just two or three answers, too few to pick a dog reliably.",
+   "<b>Echo Pup</b>: agree on 23+ questions. This is acquiescence, or yea-saying: agreeing no matter what the statement says. Half the questions on each DOGTI trait are worded in reverse, like \"At parties, I'm usually the one who warms up the crowd and gets the fun going\" and \"In a crowd, I'd rather hang back in a corner and quietly people-watch.\" Agree with both and the scores cancel out.",
+   "<b>Rebel Pup</b>: disagree on 23+ questions. This is nay-saying, the mirror image: rejecting both versions cancels the scores just the same.",
+   "Researchers who study response styles treat these patterns as biases that distort scale scores (Baumgartner & Steenkamp, 2001; Van Vaerenbergh & Thomas, 2013). Serious tests check for them too: the MMPI uses validity scales to flag answer sheets with too many skipped items, or almost all \"true\" or all \"false\" answers, as invalid (Butcher et al., 2001). DOGTI turns those answer sheets into secret dogs.",
+   "The cutoffs of 15 and 23 are our own rules of thumb, and normal answering almost never hits them. Picking only the two extremes is also a response style, but it keeps the direction of your answers, so your type still holds and we don't make it a secret dog.",
+   "The 10 Easter egg cards hide in your speed, the time of day, how many times you play, invite links, pure luck, the progress bar, the language switch and the dogs themselves. They're just for fun, have nothing to do with personality and never change your result. Each card's unlock steps are in the collection."
+  ]
  },
  "scale": [
   "Not me at all",
@@ -1413,15 +1430,8 @@ window.TI_LANG.en = {
    "tagline": "Until you open the box, I'm every dog at once.",
    "desc": "You picked \"Hard to say\" on {n} questions. You read the room and who's asking before deciding which version of you shows up. Until someone opens the box, you're all sixteen dogs at once: Golden at the party, Border Collie on deadline, French Bulldog by Sunday afternoon. The quiz that can pin you down hasn't been invented yet.",
    "hint": "Hint: pick \"Hard to say\" on 15+ questions",
-   "unlock": "Ding! Secret dog found: Schrödinger's Pup"
-  },
-  "diode": {
-   "breed": "All-or-Nothing Pup",
-   "nick": "No Gray Area",
-   "tagline": "Maybe? Kinda? Not in my vocabulary.",
-   "desc": "On {n} questions, you went straight for the ends of the scale. The middle options never even got a glance. You know exactly what you love and what you don't: it's \"absolutely\" or \"absolutely not,\" with nothing in between. People love that about you. Your yes and your no never need subtitles.",
-   "hint": "Hint: on 24+ questions pick only the two extremes, and use both",
-   "unlock": "Ding! Secret dog found: All-or-Nothing Pup"
+   "unlock": "Ding! Secret dog found: Schrödinger's Pup",
+   "why": "You picked \"Hard to say\" on more than half the questions, so each trait rests on just two or three answers. Picking a dog from that wouldn't be reliable. Psychologists call this midpoint responding."
   },
   "echo": {
    "breed": "Echo Pup",
@@ -1429,7 +1439,8 @@ window.TI_LANG.en = {
    "tagline": "Is that me? Yes. And that? Also yes.",
    "desc": "You agreed with {n} statements, including a few that flat-out contradict each other. You love a crowd and also love hiding from one; you sweat the small stuff and also never sweat anything. You nod along with the whole world. You can't even disagree with yourself. Any group chat with you in it stays lively: every message gets your \"SO true!\"",
    "hint": "Hint: agree (\"Kinda me\" / \"Totally me\") on 23+ questions",
-   "unlock": "Ding! Secret dog found: Echo Pup"
+   "unlock": "Ding! Secret dog found: Echo Pup",
+   "why": "Half the questions on each trait are worded in reverse. Agreeing with nearly everything means agreeing with opposite statements, so the scores cancel out and any dog we picked would be mostly luck. Psychologists call this acquiescence, or yea-saying."
   },
   "rebel": {
    "breed": "Rebel Pup",
@@ -1437,7 +1448,8 @@ window.TI_LANG.en = {
    "tagline": "That's not me. That's not me either. Next?",
    "desc": "You disagreed with {n} statements, even pairs that say the exact opposite of each other. You hate being labeled: the more tags people stick on you, the faster you peel them off. All sixteen dogs lined up to claim you, and you sent every one of them packing. So the gallery had to add a page just for you.",
    "hint": "Hint: disagree (\"Not me at all\" / \"Not really me\") on 23+ questions",
-   "unlock": "Ding! Secret dog found: Rebel Pup"
+   "unlock": "Ding! Secret dog found: Rebel Pup",
+   "why": "Disagreeing with nearly everything rejects the regular and the reversed questions alike, so the scores cancel out here too. Psychologists call this nay-saying."
   }
  },
  "eggs": {
@@ -1779,6 +1791,9 @@ window.TI_LANG.en = {
   "Going from 2 answer options to about 6 improves measurement quality, but adding more barely helps. Five options balance accuracy with quick tapping on your phone.",
   "Personality works more like sliding scales than clear-cut types. So DOGTI calculates continuous scores first, then shows them as a type, and tells you who else you're a bit like.",
   "The Barnum effect: vague descriptions make everyone say, \"Wow, that's so accurate!\" DOGTI's write-ups are tied to your actual scores, so different scores get different words.",
-  "A study of 18,385 dogs found that breed explains only about 9% of the differences in individual behavior. Every pup is truly one of a kind."
+  "A study of 18,385 dogs found that breed explains only about 9% of the differences in individual behavior. Every pup is truly one of a kind.",
+  "Defines and measures five response styles, including acquiescence, disacquiescence, midpoint and extreme responding, and shows they distort scale scores. DOGTI's 3 secret dogs match the first three.",
+  "A review of response-style research: where these habits come from, how they bias results and how to handle them.",
+  "The MMPI-2 checks every answer sheet with validity scales and flags ones with too many skipped items, or nearly all \"true\" or all \"false\" answers, as invalid. DOGTI turns those into secret dogs."
  ]
 };

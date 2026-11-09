@@ -53,9 +53,8 @@ window.TI_CORE = {
     mystery: { art: 'mystery', bg: '#ece7ff', ac: '#6f59d9' },
     echo: { art: 'echo', bg: '#fff1b8', ac: '#c98a00' },
     rebel: { art: 'rebel', bg: '#ffd9d4', ac: '#c43c2f' },
-    diode: { art: 'diode', bg: '#e8e8ee', ac: '#2f3040' }
   },
-  hiddenOrder: ['mystery', 'echo', 'rebel', 'diode'],
+  hiddenOrder: ['mystery', 'echo', 'rebel'],
   // 彩蛋卡：收藏在图鉴里，不改变结果
   eggs: {
     speed: { art: 'speed', bg: '#fff3c4', ac: '#d99a00' },
@@ -74,7 +73,6 @@ window.TI_CORE = {
     mysteryNeutral: 15,   // ≥15 题选"说不好"
     echoAgree: 23,        // ≥23 题选同意（4 或 5）
     rebelDisagree: 23,    // ≥23 题选不同意（1 或 2）
-    diodeExtreme: 24,     // ≥24 题只选两端（1 或 5）
     speedMs: 50000, slothMs: 360000, petterTaps: 30, againRuns: 3
   },
   // 两种狗的关系：按"哪几个维度不同"（E A N O，1=不同）给基础默契值
@@ -93,6 +91,9 @@ window.TI_CORE = {
     { cite: 'Simms, L. J., Zelazny, K., Williams, T. F., & Bernstein, L. (2019). Does the number of response options matter? Psychometric perspectives using personality questionnaire data. Psychological Assessment, 31(4), 557–566.', doi: '10.1037/pas0000648' },
     { cite: 'Haslam, N., Holland, E., & Kuppens, P. (2012). Categories versus dimensions in personality and psychopathology: A quantitative review of taxometric research. Psychological Medicine, 42(5), 903–920.', doi: '10.1017/S0033291711001966' },
     { cite: 'Forer, B. R. (1949). The fallacy of personal validation: A classroom demonstration of gullibility. Journal of Abnormal and Social Psychology, 44(1), 118–123.', doi: '10.1037/h0059240' },
-    { cite: 'Morrill, K., Hekman, J., Li, X., McClure, J., Logan, B., Goodman, L., … Karlsson, E. K. (2022). Ancestry-inclusive dog genomics challenges popular breed stereotypes. Science, 376(6592), eabk0639.', doi: '10.1126/science.abk0639' }
+    { cite: 'Morrill, K., Hekman, J., Li, X., McClure, J., Logan, B., Goodman, L., … Karlsson, E. K. (2022). Ancestry-inclusive dog genomics challenges popular breed stereotypes. Science, 376(6592), eabk0639.', doi: '10.1126/science.abk0639' },
+    { cite: 'Baumgartner, H., & Steenkamp, J.-B. E. M. (2001). Response styles in marketing research: A cross-national investigation. Journal of Marketing Research, 38(2), 143–156.', doi: '10.1509/jmkr.38.2.143.18840' },
+    { cite: 'Van Vaerenbergh, Y., & Thomas, T. D. (2013). Response styles in survey research: A literature review of antecedents, consequences, and remedies. International Journal of Public Opinion Research, 25(2), 195–217.', doi: '10.1093/ijpor/eds021' },
+    { cite: 'Butcher, J. N., Graham, J. R., Ben-Porath, Y. S., Tellegen, A., Dahlstrom, W. G., & Kaemmer, B. (2001). MMPI-2: Manual for administration, scoring, and interpretation (Rev. ed.). University of Minnesota Press.' }
   ]
 };
